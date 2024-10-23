@@ -1,22 +1,28 @@
-import moment from 'moment'
-import { useState, useEffect } from 'react'
+import moment from 'moment';
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import 'moment/locale/ar';
 
-export default function DateAndTime() {
-    // state for moment
-    const [timeAndDate, setTimeAndDate] = useState('');
+interface DateAndTimeProps {
+    cityName: string;
+}
+
+export default function DateAndTime({ cityName }: DateAndTimeProps) {
+    const { t, i18n } = useTranslation();
+
+    // Set the locale based on the current language
+    moment.locale(i18n.language);
+
+    const [timeAndDate, setTimeAndDate] = useState<string>('');
 
     useEffect(() => {
         setTimeAndDate(moment().format('MMMM Do YYYY, h:mm:ss a'));
 
-        // Create a timer to update the date and time every second
         const interval = setInterval(() => {
             setTimeAndDate(moment().format('MMMM Do YYYY, h:mm:ss a'));
         }, 1000);
-        //setInterval calls setTimeAndDate every second,
-        //which updates the state and triggers a re-render for the component each time.
-        //This ensures the displayed time is always current. 
 
-        // Cleanup interval when component be unmount
+        // Cleanup interval when the component unmounts
         return () => clearInterval(interval);
     }, []);
 
@@ -24,9 +30,11 @@ export default function DateAndTime() {
         <>
             <div className='header flex justify-end items-center w-11/12 gap-5 my-0 mx-auto'>
                 <p className='moment text-lg mt-9 text-date'>{timeAndDate}</p>
-                <h1 className='city-title' style={{ fontSize: '3rem', color: '#fff', fontWeight: "normal" }}>دمشق</h1>
+                <h1 className='city-title text-5xl text-white font-normal mt-5'>
+                    {t(cityName)}
+                </h1>
             </div>
-            <hr style={{ width: '95%', margin: '0 auto' }} />
+            <hr style={{ width: '95%', margin: '0 auto', marginTop: '10px' }} />
         </>
     );
 }
